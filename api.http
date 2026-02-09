@@ -1,0 +1,97 @@
+@baseUrl = http://localhost:8080
+@contentType = application/json
+
+###
+# Health check (publica)
+GET {{baseUrl}}/api/v1/health
+
+###
+# Rota protegida sem token (deve retornar 401)
+GET {{baseUrl}}/api/v1/tasks
+
+###
+# Login invalido (deve retornar 401)
+POST {{baseUrl}}/api/v1/login
+Content-Type: {{contentType}}
+
+{
+  "username": "admin",
+  "password": "senha-errada"
+}
+
+###
+# Login valido
+# @name login
+POST {{baseUrl}}/api/v1/login
+Content-Type: {{contentType}}
+
+{
+  "username": "admin",
+  "password": "123456"
+}
+
+###
+# Token JWT retornado no login (REST Client usa JSONPath com $.)
+@token = {{login.response.body.$.data.access_token}}
+
+###
+# Perfil do usuario autenticado
+GET {{baseUrl}}/api/v1/me
+Authorization: Bearer {{token}}
+
+###
+# Listar tarefas (autenticado)
+GET {{baseUrl}}/api/v1/tasks
+Authorization: Bearer {{token}}
+
+###
+# Criar tarefa
+# @name createTask
+POST {{baseUrl}}/api/v1/tasks
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Estudar JWT com Gin",
+  "done": false
+}
+
+###
+# Salva o ID retornado para usar nas proximas requests
+@taskId = {{createTask.response.body.$.data.id}}
+
+###
+# Buscar tarefa por ID
+GET {{baseUrl}}/api/v1/tasks/{{taskId}}
+Authorization: Bearer {{token}}
+
+###
+# Atualizar tarefa
+PUT {{baseUrl}}/api/v1/tasks/{{taskId}}
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "Estudar JWT com REST Client",
+  "done": true
+}
+
+###
+# Teste de validacao: title curto (deve retornar 400)
+POST {{baseUrl}}/api/v1/tasks
+Authorization: Bearer {{token}}
+Content-Type: {{contentType}}
+
+{
+  "title": "ab"
+}
+
+###
+# Deletar tarefa
+DELETE {{baseUrl}}/api/v1/tasks/{{taskId}}
+Authorization: Bearer {{token}}
+
+###
+# Confirmar que nao existe mais (deve retornar 404)
+GET {{baseUrl}}/api/v1/tasks/{{taskId}}
+Authorization: Bearer {{token}}
