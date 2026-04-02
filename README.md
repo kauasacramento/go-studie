@@ -36,11 +36,28 @@ cd projects/orderflow-concurrency
 go run .
 ```
 
+### 3. EventBridge Testcontainers + Fuzz
+
+Pasta: `projects/eventbridge-testcontainers-fuzz`
+
+- integracao real com Postgres em container
+- integracao real com NATS em container
+- `testcontainers-go` para testes com Docker
+- `Fuzz Testing` em decoder/validator
+
+Rodar:
+
+```bash
+cd projects/eventbridge-testcontainers-fuzz
+go test ./...
+```
+
 ## Estrutura
 
 ```text
 projects/
   api-didatica-gin-jwt/
+  eventbridge-testcontainers-fuzz/
   orderflow-concurrency/
 ```
 

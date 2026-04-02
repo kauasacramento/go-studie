@@ -2,5 +2,6 @@ go 1.23.0
 
 use (
 	./projects/api-didatica-gin-jwt
+	./projects/eventbridge-testcontainers-fuzz
 	./projects/orderflow-concurrency
 )
